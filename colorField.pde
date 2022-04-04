@@ -2,7 +2,7 @@ class colorField {
 
   private int fld_width;
   private int fld_height;
-  private color fld_background;
+  private long fld_background;
   private ArrayList<Long> field;
   private ArrayList<colorForm> forms;
   private PApplet pa;
@@ -25,27 +25,29 @@ class colorField {
 
     forms = new ArrayList<colorForm>();
   }
+  
+  public void add(colorForm cf) {
+    forms.add(cf);
+  }
 
   public void draw() {
+    background(0);
     for ( int y=1; y<fld_height; y++ ) {
       for ( int x=1; x<fld_width; x++ ) {
-        float red=0;
-        float green=0;
-        float blue=0;
+        long c = 0;
         float number=0.0;
         for ( colorForm cf : forms) {
-          if (cf.contains(x, y)) {
-            color c = cf.getColor(x, y);
-            red += red(c);
-            green += green(c);
-            blue += blue(c);
+          if (!cf.dead() && cf.contains(x, y)) {
+            c += cf.getColor(x, y);
             number++;
           }
         }
 
-        pa.stroke(red/number, green/number, blue/number);
+        color rc = (color)(round(c/number));
+        pa.stroke(rc);
         pa.point(x, y);
       }
     }
+    for(colorForm cf : forms) cf.tick();
   }
 }
